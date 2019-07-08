@@ -8,27 +8,47 @@ server.get("/api/users", (req, res) => {
   users
     .find()
     .then(data => {
-      console.log("happy");
+      res.status(200).json(data);
     })
     .catch(error => {
-      console.log("sad");
+      res
+        .status(500)
+        .json({ error: "The users information could not be retrieved." });
     });
 });
 
 server.get("/api/users/:id", (req, res) => {
-  res.json("get one hub by id using req.params.id");
+    users
+    .findById(req.params.id)
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(error => {
+      res
+        .status(404)
+        .json({ message: "The user with the specified ID does not exist." });
+    });
 });
 
 server.post("/api/users", (req, res) => {
-  res.json("create a new hub using req.body");
+    users
+    .insert(req.body)
+    .then(data => {
+      res.status(201).json(users.findById(data.id));
+    })
+    .catch(error => {
+      res
+        .status(400)
+        .json({ errorMessage: "Please provide name and bio for the user." });
+    });
 });
 
 server.delete("/api/users/:id", (req, res) => {
-  res.json("delete hub by id using re.params.id");
+  res.json("delete user by id using re.params.id");
 });
 
 server.put("/api/users/:id", (req, res) => {
-  res.json("update hub by id using req.body");
+  res.json("update user by id using req.body");
 });
 
 // step four: listen for incoming requests
