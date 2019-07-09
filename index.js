@@ -30,6 +30,19 @@ server.get("/api/users/:id", (req, res) => {
     });
 });
 
+const findUserById = (id, res, status) => {
+  users
+    .findById(id)
+    .then(data => {
+      res.status(status).json(data);
+    })
+    .catch(error => {
+      res
+        .status(500)
+        .json({ error: "The user information could not be retrieved." });
+    });
+};
+
 server.post("/api/users", (req, res) => {
   if (!req.body.name || !req.body.bio) {
     res
@@ -39,7 +52,7 @@ server.post("/api/users", (req, res) => {
     users
       .insert(req.body)
       .then(data => {
-        res.status(201).json(users.findById(data.id));
+        findUserById(data.id, res, 201);
       })
       .catch(error => {
         res.status(400).json({
@@ -50,20 +63,18 @@ server.post("/api/users", (req, res) => {
 });
 
 server.delete("/api/users/:id", (req, res) => {
-  if (!users.findById(req.params.id)) {
-    res
-      .status(404)
-      .json({ message: "The user with the specified ID does not exist." });
-  } else {
-    users
-      .remove(req.body.id)
-      .then(data => {
+  users
+    .remove(req.params.id)
+    .then(data => {
+      if (data.name) {
         res.status(200).json(data);
-      })
-      .catch(err => {
-        res.status(500).json({ error: "The user could not be removed" });
-      });
-  }
+      } else {
+        res.status(404).json({ error: "There is no user with this id" });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: "The user could not be removed" });
+    });
 });
 
 server.put("/api/users/:id", (req, res) => {
@@ -72,22 +83,20 @@ server.put("/api/users/:id", (req, res) => {
       .status(400)
       .json({ errorMessage: "Please provide name and bio for the user." });
   } else {
-    if (!users.findById(req.params.id)) {
-      res
-        .status(404)
-        .json({ message: "The user with the specified ID does not exist." });
-    } else {
-      users
-        .update(req.params.id, req.body)
-        .then(data => {
-          res.status(200).json(users.findById(data.id));
-        })
-        .catch(err => {
-          res
-            .status(500)
-            .json({ error: "The user information could not be modified." });
-        });
-    }
+    users
+      .update(req.params.id, req.body)
+      .then(data => {
+        if (data.name) {
+          res.status(200).json(data);
+        } else {
+          res.status(404).json({ error: "There is no user with this id" });
+        }
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({ error: "The user information could not be modified." });
+      });
   }
 });
 
