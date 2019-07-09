@@ -87,7 +87,7 @@ server.put("/api/users/:id", (req, res) => {
       .update(req.params.id, req.body)
       .then(data => {
         if (data.name) {
-          res.status(200).json(data);
+          findUserById(data.id, res, 200);
         } else {
           res.status(404).json({ error: "There is no user with this id" });
         }
@@ -100,7 +100,6 @@ server.put("/api/users/:id", (req, res) => {
   }
 });
 
-// step four: listen for incoming requests
 server.listen(3000, () => {
   console.log("listening on 3000");
 });
