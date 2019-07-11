@@ -1,7 +1,7 @@
+require('dotenv').config();
 const express = require("express");
 const server = express();
 const users = require("./data/db");
-require('dotenv').config();
 
 server.use(express.json());
 
@@ -104,5 +104,5 @@ server.put("/api/users/:id", (req, res) => {
 const port = process.env.PORT || 4000;
 
 server.listen(port, () => {
-  console.log(`listening on 3000${port}`);
+  console.log(`listening on ${port}`);
 });
