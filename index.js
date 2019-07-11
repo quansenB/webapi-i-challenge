@@ -4,7 +4,7 @@ const server = express();
 const users = require("./data/db");
 
 server.use(express.json());
-
+/* 
 server.get("/api/users", (req, res) => {
   users
     .find()
@@ -99,9 +99,15 @@ server.put("/api/users/:id", (req, res) => {
           .json({ error: "The user information could not be modified." });
       });
   }
-});
+}); */
+
+
 
 const port = process.env.PORT || 4000;
+
+server.get("/", (req, res)=>{
+  res.send("<p>hello</p>")
+})
 
 server.listen(port, () => {
   console.log(`listening on ${port}`);
